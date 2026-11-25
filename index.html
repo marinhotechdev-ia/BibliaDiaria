@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Bible Daily — Três leituras por dia. Uma jornada com Deus. Sorteio e acompanhamento de leituras bíblicas diárias de Salmos, Provérbios e demais livros da Bíblia." />
+  <meta name="theme-color" content="#07090f" />
+  <meta property="og:title" content="Bible Daily" />
+  <meta property="og:description" content="Três leituras por dia. Uma jornada com Deus." />
+
+  <title>Bible Daily — Três leituras por dia</title>
+
+  <!-- Favicon (emoji via SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ── Confetti Container ─────────────────────────────────────────── -->
+<div id="confetti-container" aria-hidden="true"></div>
+
+<!-- ── Toast ─────────────────────────────────────────────────────── -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     WRAPPER PRINCIPAL
+     ════════════════════════════════════════════════════════════════ -->
+<div class="app-wrapper">
+
+  <!-- ── BANNER DIA RETROATIVO ATIVO ────────────────────────────── -->
+  <div id="retro-active-banner" class="retro-active-banner" style="display:none;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span>📅 Visualizando dia retroativo: <strong id="retro-banner-date">—</strong></span>
+    </div>
+    <button id="retro-banner-today-btn" class="btn btn-sm btn-primary">Voltar para Hoje</button>
+  </div>
+
+  <!-- ── HEADER ────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-controls">
+      <button id="theme-toggle" class="icon-btn" title="Mudar tema" aria-label="Alternar tema claro/escuro">🌙</button>
+      <button id="header-draw-btn" class="icon-btn" title="Fazer Sorteio Diário" aria-label="Sorteio Diário">🎲</button>
+      <button id="share-btn"    class="icon-btn" title="Compartilhar leitura do dia em texto" aria-label="Compartilhar texto">🔗</button>
+      <button id="story-btn"   class="icon-btn" title="Tirar print para Status do WhatsApp e Instagram" aria-label="Gerar imagem para Status e Stories">📸</button>
+    </div>
+
+    <div class="logo-area">
+      <div class="app-logo">
+        <span class="logo-icon">📖</span>
+        <h1 class="app-title">BÍBLIA DIÁRIA</h1>
+      </div>
+      <p class="app-subtitle">Três leituras por dia. Uma jornada com Deus.</p>
+      <p class="current-date" id="current-date" aria-live="polite"></p>
+    </div>
+  </header>
+
+  <!-- ── BARRA DE PROGRESSO ────────────────────────────────────── -->
+  <section class="progress-section" aria-label="Progresso do dia">
+    <div class="progress-header">
+      <span class="progress-label">Progresso hoje</span>
+      <div class="progress-numbers">
+        <span class="progress-count" id="progress-count" aria-label="Leituras concluídas">0 / 3</span>
+        <span class="progress-percent" id="progress-text">0%</span>
+      </div>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="progress-fill" id="progress-bar"></div>
+    </div>
+  </section>
+
+  <!-- ── VERSÍCULO MOTIVACIONAL ─────────────────────────────────── -->
+  <section class="motivational-section" aria-label="Versículo do dia">
+    <p class="motivational-text" id="motivational-text">Carregando...</p>
+    <p class="motivational-ref"  id="motivational-ref"></p>
+  </section>
+
+  <!-- ── BARRA DE AÇÕES PRINCIPAIS (SORTEIO DIÁRIO & PRINT STATUS/INSTA) ── -->
+  <section class="daily-hero-actions" aria-label="Ações principais do dia">
+    <button id="btn-daily-draw-main" class="hero-btn hero-btn-draw" aria-label="Fazer sorteio diário de todas as leituras">
+      <span class="hero-btn-icon">🎲</span>
+      <div class="hero-btn-content">
+        <span class="hero-btn-title">Fazer Sorteio Diário</span>
+        <span class="hero-btn-sub">Sortear leituras com alta entropia</span>
+      </div>
+    </button>
+
+    <button id="btn-story-main" class="hero-btn hero-btn-story" aria-label="Tirar print para Status do WhatsApp e Instagram">
+      <span class="hero-btn-icon">📸</span>
+      <div class="hero-btn-content">
+        <span class="hero-btn-title">Tirar Print para Status / Insta</span>
+        <span class="hero-btn-sub">Gerar imagem para WhatsApp e Stories</span>
+      </div>
+    </button>
+  </section>
+
+  <!-- ── CARTÕES DE LEITURA ─────────────────────────────────────── -->
+  <main>
+    <div class="cards-grid" aria-label="Leituras do dia">
+
+      <!-- Card 1: Salmos -->
+      <article class="reading-card" id="psalm-card" aria-label="Leitura de Salmos">
+        <div class="card-header">
+          <div class="card-icon-area">
+            <span class="card-icon">🙏</span>
+            <div>
+              <span class="card-type-label">Leitura 1</span>
+              <span class="card-type-name">Salmos</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span class="pool-badge" id="psalm-pool-badge" title="Capítulos ainda não lidos disponíveis no sorteio">150 disponíveis</span>
+            <div class="completed-tag" aria-label="Leitura concluída">
+              <span>✓</span>
+              <span>Lido</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-reading">
+          <p class="reading-book" id="psalm-book">—</p>
+          <p class="reading-chapter" id="psalm-chapter">Carregando...</p>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-primary btn-draw" data-type="psalm" id="btn-draw-psalm" aria-label="Sortear novo capítulo de Salmos">
+            🎲 Sortear Salmo
+          </button>
+          <button class="btn btn-outline btn-read" data-type="psalm" id="btn-read-psalm" aria-label="Ler capítulo de Salmos">
+            📖 Ler capítulo
+          </button>
+          <button class="btn btn-success btn-mark" data-type="psalm" id="btn-mark-psalm" aria-label="Marcar Salmos como lido">
+            ✓ Marcar como lido
+          </button>
+        </div>
+      </article>
+
+      <!-- Card 2: Provérbios -->
+      <article class="reading-card" id="proverb-card" aria-label="Leitura de Provérbios">
+        <div class="card-header">
+          <div class="card-icon-area">
+            <span class="card-icon">💡</span>
+            <div>
+              <span class="card-type-label">Leitura 2</span>
+              <span class="card-type-name">Provérbios</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span class="pool-badge" id="proverb-pool-badge" title="Capítulos ainda não lidos disponíveis no sorteio">31 disponíveis</span>
+            <div class="day-proverb-badge" id="proverb-mode-badge" title="Capítulo de Provérbios">📅 Pv do dia</div>
+            <div class="completed-tag" aria-label="Leitura concluída">
+              <span>✓</span>
+              <span>Lido</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-reading">
+          <p class="reading-book" id="proverb-book">—</p>
+          <p class="reading-chapter" id="proverb-chapter">Carregando...</p>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-primary btn-draw" data-type="proverb" id="btn-draw-proverb" aria-label="Sortear capítulo de Provérbios">
+            🎲 Sortear Provérbio
+          </button>
+          <button class="btn btn-ghost btn-pv-day" id="btn-pv-day" title="Usar o capítulo correspondente ao dia de hoje">
+            📅 Pv do dia
+          </button>
+          <button class="btn btn-outline btn-read" data-type="proverb" id="btn-read-proverb" aria-label="Ler capítulo de Provérbios">
+            📖 Ler capítulo
+          </button>
+          <button class="btn btn-success btn-mark" data-type="proverb" id="btn-mark-proverb" aria-label="Marcar Provérbios como lido">
+            ✓ Marcar como lido
+          </button>
+        </div>
+      </article>
+
+      <!-- Card 3: Leitura Geral -->
+      <article class="reading-card" id="general-card" aria-label="Leitura bíblica geral">
+        <div class="card-header">
+          <div class="card-icon-area">
+            <span class="card-icon">✨</span>
+            <div>
+              <span class="card-type-label">Leitura 3</span>
+              <span class="card-type-name">Bíblia Geral</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span class="pool-badge" id="general-pool-badge" title="Capítulos ainda não lidos disponíveis no sorteio">1.008 disponíveis</span>
+            <div class="completed-tag" aria-label="Leitura concluída">
+              <span>✓</span>
+              <span>Lido</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-reading">
+          <p class="reading-book" id="general-book">—</p>
+          <p class="reading-chapter" id="general-chapter">Carregando...</p>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-primary btn-draw" data-type="general" id="btn-draw-general" aria-label="Sortear capítulo bíblico geral">
+            🎲 Sortear capítulo
+          </button>
+          <button class="btn btn-outline btn-read" data-type="general" id="btn-read-general" aria-label="Ler capítulo bíblico geral">
+            📖 Ler capítulo
+          </button>
+          <button class="btn btn-success btn-mark" data-type="general" id="btn-mark-general" aria-label="Marcar leitura geral como lida">
+            ✓ Marcar como lido
+          </button>
+        </div>
+      </article>
+
+    </div><!-- /.cards-grid -->
+  </main>
+
+  <!-- ── ABAS: ESTATÍSTICAS / HISTÓRICO / CALENDÁRIO ────────────── -->
+  <section class="tabs-section" aria-label="Acompanhamento e histórico">
+
+    <nav class="tabs-nav" role="tablist" aria-label="Seções de acompanhamento">
+      <button class="tab-btn active" data-tab="stats"     role="tab" aria-selected="true"  id="tab-btn-stats">📊 Estatísticas</button>
+      <button class="tab-btn"        data-tab="dashboard" role="tab" aria-selected="false" id="tab-btn-dashboard">🗺️ Dashboard</button>
+      <button class="tab-btn"        data-tab="history"   role="tab" aria-selected="false" id="tab-btn-history">📋 Histórico</button>
+      <button class="tab-btn"        data-tab="calendar"  role="tab" aria-selected="false" id="tab-btn-calendar">📅 Calendário</button>
+    </nav>
+
+    <!-- Painel Estatísticas -->
+    <div class="tab-panel active" id="tab-stats" role="tabpanel" aria-labelledby="tab-btn-stats">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="streak-count">0</div>
+          <div class="stat-label">Dias consecutivos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value" id="total-chapters">0</div>
+          <div class="stat-label">Capítulos lidos no total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-value" id="today-completed">0</div>
+          <div class="stat-label">Concluídas hoje</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-value" id="total-days">0</div>
+          <div class="stat-label">Dias com leitura</div>
+        </div>
+      </div>
+
+      <!-- Seção de Entropia e Cobertura Bíblica -->
+      <div class="entropy-card" id="entropy-section">
+        <div class="entropy-header">
+          <div class="entropy-title-area">
+            <span class="entropy-badge">⚡ Alta Entropia Ativa</span>
+            <h3 class="entropy-title">Entropia & Cobertura Bíblica</h3>
+          </div>
+          <div class="entropy-toggle-area">
+            <label class="switch" title="Ativar/desativar exclusão de capítulos lidos">
+              <input type="checkbox" id="entropy-toggle" checked />
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <p class="entropy-desc">
+          Ao concluir uma leitura, o capítulo é <strong>retirado dos próximos sorteios</strong> para garantir variedade máxima e leitura de toda a Bíblia sem repetição de capítulos.
+        </p>
+
+        <div class="entropy-stats-list">
+          <!-- Salmos -->
+          <div class="entropy-row">
+            <div class="entropy-row-info">
+              <span class="entropy-row-label">🙏 Salmos</span>
+              <span class="entropy-row-val" id="entropy-psalm-val">0 / 150 lidos (150 no sorteio)</span>
+            </div>
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill bar-gold" id="entropy-psalm-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Provérbios -->
+          <div class="entropy-row">
+            <div class="entropy-row-info">
+              <span class="entropy-row-label">💡 Provérbios</span>
+              <span class="entropy-row-val" id="entropy-proverb-val">0 / 31 lidos (31 no sorteio)</span>
+            </div>
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill bar-green" id="entropy-proverb-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Bíblia Geral -->
+          <div class="entropy-row">
+            <div class="entropy-row-info">
+              <span class="entropy-row-label">✨ Bíblia Geral</span>
+              <span class="entropy-row-val" id="entropy-general-val">0 / 1.008 lidos (1.008 no sorteio)</span>
+            </div>
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill bar-blue" id="entropy-general-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Total Geral da Bíblia -->
+          <div class="entropy-row total-row">
+            <div class="entropy-row-info">
+              <span class="entropy-row-label">📖 Total da Bíblia</span>
+              <span class="entropy-row-val" id="entropy-total-val">0 / 1.189 capítulos (0%)</span>
+            </div>
+            <div class="entropy-bar-track">
+              <div class="entropy-bar-fill bar-accent" id="entropy-total-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="entropy-actions">
+          <button id="btn-reset-pool" class="btn btn-outline btn-sm" title="Voltar todos os capítulos lidos para a lista de sorteio">
+            🔄 Reiniciar ciclo de sorteio
+          </button>
+        </div>
+      </div>
+
+      <div class="action-footer">
+        <button id="reset-day-btn" class="btn btn-outline" aria-label="Reiniciar sorteios do dia">
+          🔄 Reiniciar dia
+        </button>
+      </div>
+    </div>
+
+    <!-- ── PAINEL DASHBOARD: EVOLUÇÃO DA LEITURA BÍBLICA ────────────── -->
+    <div class="tab-panel" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-btn-dashboard">
+      <div class="dashboard-header-card">
+        <div class="dash-headline">
+          <div class="dash-title-wrap">
+            <span class="dash-tag">Visão Geral</span>
+            <h2 class="dash-main-title">Evolução da Leitura Bíblica</h2>
+          </div>
+          <p class="dash-desc">
+            Acompanhe o progresso de cada um dos 1.189 capítulos da Bíblia. Os capítulos já concluídos estão destacados em <strong>verde forte com brilho</strong>.
+          </p>
+        </div>
+
+        <!-- 4 Cards Resumo de Evolução -->
+        <div class="dash-summary-grid">
+          <div class="dash-stat-box">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon">📖</span>
+              <span class="dash-stat-pct" id="dash-total-pct">0%</span>
+            </div>
+            <div class="dash-stat-label">Total da Bíblia</div>
+            <div class="dash-stat-nums" id="dash-total-val">0 / 1.189</div>
+            <div class="dash-bar-track">
+              <div class="dash-bar-fill bar-gold" id="dash-total-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="dash-stat-box">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon">📜</span>
+              <span class="dash-stat-pct" id="dash-at-pct">0%</span>
+            </div>
+            <div class="dash-stat-label">Antigo Testamento</div>
+            <div class="dash-stat-nums" id="dash-at-val">0 / 929</div>
+            <div class="dash-bar-track">
+              <div class="dash-bar-fill bar-blue" id="dash-at-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="dash-stat-box">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon">🕊️</span>
+              <span class="dash-stat-pct" id="dash-nt-pct">0%</span>
+            </div>
+            <div class="dash-stat-label">Novo Testamento</div>
+            <div class="dash-stat-nums" id="dash-nt-val">0 / 260</div>
+            <div class="dash-bar-track">
+              <div class="dash-bar-fill bar-green" id="dash-nt-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="dash-stat-box">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon">⭐</span>
+              <span class="dash-stat-pct" id="dash-poetic-pct">0%</span>
+            </div>
+            <div class="dash-stat-label">Salmos & Provérbios</div>
+            <div class="dash-stat-nums" id="dash-poetic-val">0 / 181</div>
+            <div class="dash-bar-track">
+              <div class="dash-bar-fill bar-accent" id="dash-poetic-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Filtros e Busca -->
+        <div class="dash-toolbar">
+          <div class="dash-filter-chips" role="radiogroup" aria-label="Filtrar livros">
+            <button class="dash-chip active" data-filter="all">Todos (66)</button>
+            <button class="dash-chip" data-filter="AT">Antigo Testamento (39)</button>
+            <button class="dash-chip" data-filter="NT">Novo Testamento (27)</button>
+            <button class="dash-chip" data-filter="POETIC">Salmos & Provérbios</button>
+          </div>
+
+          <div class="dash-search-row">
+            <div class="dash-search-wrap">
+              <span class="dash-search-icon">🔍</span>
+              <input type="text" id="dash-search-input" class="dash-search-input" placeholder="Buscar livro (ex: Gênesis, Salmos, João...)" aria-label="Buscar livro" />
+              <button id="dash-search-clear" class="dash-search-clear" title="Limpar busca" style="display:none;">✕</button>
+            </div>
+            <select id="dash-status-filter" class="dash-status-select" aria-label="Filtrar por status">
+              <option value="all">Todos os capítulos</option>
+              <option value="completed">Apenas concluídos</option>
+              <option value="pending">Apenas pendentes</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Legenda Visual -->
+        <div class="dash-legend-bar">
+          <div class="dash-legend-items">
+            <span class="legend-item"><span class="square-demo completed"></span> <strong>Concluído (Cor forte)</strong></span>
+            <span class="legend-item"><span class="square-demo pending"></span> Pendente</span>
+          </div>
+          <span class="legend-tip">💡 Clique em qualquer quadradinho para ler o texto ou marcar como lido.</span>
+        </div>
+      </div>
+
+      <!-- Container dinâmico com os livros e quadradinhos -->
+      <div class="dashboard-books-list" id="dashboard-books-container" aria-label="Grade de livros e capítulos">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+
+    <!-- Painel Histórico -->
+    <div class="tab-panel" id="tab-history" role="tabpanel" aria-labelledby="tab-btn-history">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+        <p class="section-title" style="margin-bottom:0;">Últimos 30 dias</p>
+        <span class="history-help-tip">💡 Clique em qualquer dia para ver detalhes ou sortear dias anteriores</span>
+      </div>
+      <div class="history-list" id="history-list" aria-label="Histórico de leituras"></div>
+    </div>
+
+    <!-- Painel Calendário -->
+    <div class="tab-panel" id="tab-calendar" role="tabpanel" aria-labelledby="tab-btn-calendar">
+      <div class="calendar-section">
+        <div class="calendar-nav">
+          <button id="cal-prev" class="cal-nav-btn" aria-label="Mês anterior">‹</button>
+          <h2 id="cal-title">—</h2>
+          <button id="cal-next" class="cal-nav-btn" aria-label="Próximo mês">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid" role="grid" aria-label="Calendário de leituras"></div>
+
+        <div style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--text-muted); align-items:center;">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:3px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.4);display:inline-block"></span>Completo</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:3px;background:rgba(212,168,83,0.2);display:inline-block"></span>Parcial</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:3px;border:2px solid var(--gold);display:inline-block"></span>Hoje</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:3px;border:1px dashed rgba(255,255,255,0.25);display:inline-block"></span>Sem leitura (clique p/ sortear)</span>
+        </div>
+      </div>
+    </div>
+
+  </section><!-- /.tabs-section -->
+
+</div><!-- /.app-wrapper -->
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL DE LEITURA
+     ════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="reading-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">—</h2>
+      <button class="modal-close-btn" id="modal-close" aria-label="Fechar modal">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body" tabindex="0">
+      <!-- Conteúdo carregado dinamicamente -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" id="modal-mark-btn" data-type="">
+        ✓ Marcar como lido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL DE AÇÃO RÁPIDA: CAPÍTULO NO DASHBOARD
+     ════════════════════════════════════════════════════════════════ -->
+<div class="confirm-overlay" id="chapter-action-modal" role="dialog" aria-modal="true" aria-labelledby="chapter-action-title">
+  <div class="confirm-box" style="max-width:380px; text-align:center;">
+    <div class="confirm-icon" id="chapter-action-icon">📖</div>
+    <h2 class="confirm-title" id="chapter-action-title">Gênesis — Capítulo 1</h2>
+    <div id="chapter-action-status-badge" class="chapter-status-pill" style="margin:8px auto 14px;">Pendente</div>
+    <p class="confirm-text" id="chapter-action-info-text" style="margin-bottom:20px; font-size:13px;">
+      Selecione o que deseja fazer com este capítulo:
+    </p>
+    <div class="confirm-actions" style="flex-direction:column; gap:10px;">
+      <button id="chapter-action-read-btn" class="btn btn-outline" style="width:100%;">
+        📖 Ler capítulo completo
+      </button>
+      <button id="chapter-action-toggle-btn" class="btn btn-success" style="width:100%;">
+        ✓ Marcar como lido
+      </button>
+      <button id="chapter-action-close-btn" class="btn btn-ghost" style="width:100%;">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL DE LEITURAS RETROATIVAS / DETALHES DO DIA
+     ════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="retro-day-modal" role="dialog" aria-modal="true" aria-labelledby="retro-modal-title">
+  <div class="modal-box retro-modal-box">
+    <div class="modal-header">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <h2 class="modal-title" id="retro-modal-title">—</h2>
+          <span class="retro-badge" id="retro-modal-badge">Dia Retroativo</span>
+        </div>
+        <p class="retro-date-full" id="retro-modal-date-full">—</p>
+      </div>
+      <button class="modal-close-btn" id="retro-modal-close" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal-body" id="retro-modal-body" style="padding: 20px;">
+      <!-- Conteúdo renderizado dinamicamente via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL DE CONFIRMAÇÃO (Reiniciar dia)
+     ════════════════════════════════════════════════════════════════ -->
+<div class="confirm-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <h2 class="confirm-title" id="confirm-title">Reiniciar o dia?</h2>
+    <p class="confirm-text">
+      Isso irá gerar novos sorteios para hoje e <strong>apagar as marcações de leitura</strong> do dia atual.
+      O histórico dos outros dias será mantido.
+    </p>
+    <div class="confirm-actions">
+      <button id="confirm-cancel" class="btn btn-outline">Cancelar</button>
+      <button id="confirm-ok" class="btn btn-primary">🎲 Sim, reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL DE CONFIRMAÇÃO: NOVO SORTEIO DIÁRIO (quando há leituras lidas)
+     ════════════════════════════════════════════════════════════════ -->
+<div class="confirm-overlay" id="draw-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="draw-confirm-title">
+  <div class="confirm-box" style="max-width:440px;">
+    <div class="confirm-icon">🎲</div>
+    <h2 class="confirm-title" id="draw-confirm-title">Realizar Sorteio Diário</h2>
+    <p class="confirm-text" id="draw-confirm-text">
+      Você já tem leituras marcadas como concluídas hoje. Como deseja realizar o novo sorteio?
+    </p>
+    <div class="confirm-actions" style="flex-direction:column; gap:10px;">
+      <button id="draw-unread-only-btn" class="btn btn-primary" style="width:100%;">
+        🎲 Sortear apenas não lidas (manter lidas)
+      </button>
+      <button id="draw-all-btn" class="btn btn-outline" style="width:100%;">
+        🔄 Sortear todas (reiniciar hoje)
+      </button>
+      <button id="draw-cancel-btn" class="btn btn-ghost" style="width:100%;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MODAL: GERADOR DE IMAGEM PARA STATUS E STORIES
+     ════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-modal-title">
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="story-modal-title">📸 Status & Stories</h2>
+        <span class="social-tags">WhatsApp &bull; Instagram</span>
+      </div>
+      <button class="modal-close-btn" id="story-modal-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" style="padding:18px; display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <p style="font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.4;">
+        Formato retrato 9:16 (1080×1920) ideal para postar no <strong>Status do WhatsApp</strong> e <strong>Stories do Instagram</strong>.
+      </p>
+
+      <!-- Canvas onde a imagem é desenhada -->
+      <div class="canvas-preview-wrap">
+        <canvas id="story-canvas"></canvas>
+      </div>
+
+      <!-- Ações sociais -->
+      <div class="story-actions-grid">
+        <button id="story-share-btn" class="btn btn-primary" title="Compartilhar imagem nas redes sociais">
+          📲 Compartilhar no Whats / Insta
+        </button>
+        <button id="story-copy-btn" class="btn btn-secondary" title="Copiar imagem para colar no WhatsApp Web ou Instagram">
+          📋 Copiar Imagem
+        </button>
+        <button id="story-download-btn" class="btn btn-outline" title="Baixar imagem em PNG">
+          ⬇️ Baixar Imagem (PNG)
+        </button>
+        <button id="story-whatsapp-text-btn" class="btn btn-outline" title="Enviar resumo em texto para o WhatsApp">
+          💬 Texto no WhatsApp
+        </button>
+      </div>
+
+      <p class="story-tip">
+        💡 <em>Dica:</em> No celular, clique em <strong>Compartilhar</strong> para enviar direto pro WhatsApp ou Instagram. No computador, clique em <strong>Copiar Imagem</strong> e cole (Ctrl+V) no WhatsApp Web!
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     SCRIPTS (ordem de dependência importa)
+     ════════════════════════════════════════════════════════════════ -->
+<script src="js/bible-data.js"></script>
+<script src="js/randomizer.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/story-generator.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
